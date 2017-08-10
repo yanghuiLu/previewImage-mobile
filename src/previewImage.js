@@ -74,7 +74,7 @@
         this.marginRight = 15;  //图片之间的间隔->previewImage-item的margin-right
         this.imageChageMoveX = this.marginRight+this.winw;  //图片切换容器的x位移量
         this.imageChageNeedX = Math.floor(this.winw*(0.5)); //图片切换所需x位移量
-        this.prefix = ["","webkit","Moz","ms","o"]; //css前缀
+        this.cssprefix = ["","webkit","Moz","ms","o"]; //css前缀
         this.imgLoadCache = new Object();  //图片加载状态储存 key=md5(img.src),value={isload:true,elem:img};
         this.scale = 1;     //默认图片放大倍数
         this.maxScale = 4;  //图片默认最大放大倍数
@@ -83,25 +83,26 @@
         this.openTime = 0.3;    //打开图片浏览动画时间
         this.slipTime = 0.5;    //图片切换时间
         this.$box = false;  //图片容器加载状态
-        var $style = document.createElement('style');
-        $style.innerText = style;
-        this.$container = document.createElement('div');
-        this.$container.id = '__previewImage-container';
-        this.$container.style.width = this.winw+'px';
-        this.$container.style.height = this.winh+'px';
-        document.body.appendChild(this.$container);
-        document.head.appendChild($style);
-        this.bind();
+        var $style = document.createElement('style');   //样式标签
+        $style.innerText = style;   //加载样式
+        this.$container = document.createElement('div');    //加载容器
+        this.$container.id = '__previewImage-container';    //容器加上id
+        this.$container.style.width = this.winw+'px';   //加上宽度
+        this.$container.style.height = this.winh+'px';  //加上高度
+        document.body.appendChild(this.$container);     //插入容器到body
+        document.head.appendChild($style);              //插入样式到head
+        this.bind();    //绑定事件
     }
     _previewImage.prototype.start = function(obj){  //可优化 todo
-        var urls = obj.urls;
-        var current = obj.current;
-        this.$container.innerHTML = '';
-        if(!urls||!$.isArray(urls)||urls.length==0){
+        var urls = obj.urls;    //待预览的图片列表
+        var current = obj.current;  //当前预览的图片地址
+
+        this.$container.innerHTML = ''; //清空容器
+        if(!urls||!$.isArray(urls)||urls.length==0){    //参数检测
             throw new Error("urls must be a Array and the minimum length more than zero");
             return
         }
-        if(!current){
+        if(!current){   //参数检测
             this.index = 0; 
             console.warn("current is empty,it will be the first value of urls!");
         }else{
@@ -118,37 +119,37 @@
         this.bIndex = this.maxLen+2;    //boxIndex
         this.maxOverWidthPercent = 0.5; //边界图片最大可拉取宽度，屏幕宽度的百分比
         this.imgStatusCache = new Object(); //图片信息储存
-        this.render();
+        this.render();                //渲染预览模块
     }
 
     _previewImage.prototype.render = function(){
         var _this = this;
-        if(this.$box===false){
+        if(this.$box===false){  //加载图片容器
             var box = document.createElement('div');
             box.className += 'previewImage-box';
             this.$box = box; //更新图片容器
         }else{
             this.$box.innerHTML = '';  //已有图片容器-清空容器
         }
-        var text = document.createElement('div');
+        var text = document.createElement('div');   //当前张数/总张数--文本标签
         this.$text = text;
         this.$text.className += 'previewImage-text';
         this.$text.innerText = (this.index+1)+"/"+(this.maxLen+1);    //当前第几张/图片总数
         this.container = this.imgStatusCache[this.cIndex] = {elem:this.$container,x:this.winw,y:0,m:0,my:0,scale:1,scalem:1}; //存储容器状态
         this.box = this.imgStatusCache[this.bIndex] = {elem:this.$box,x:0,y:0,m:0,my:0,scale:1,scalem:1};   //存储图片容器状态
-        this.urls.forEach(function(v,i){
+        this.urls.forEach(function(v,i){    //图片
             var div = document.createElement('div');
             var hash = window.md5?md5(v+i):v+i;
             var img;
             var imgCache = _this.imgLoadCache[hash];
             //缓存图片&&读取缓存图片
-            if(imgCache&&imgCache.isload){    //图片已加载
+            if(imgCache&&imgCache.isload){    //图片已加载--使用缓存
                 img = imgCache.elem;
-            }else{
+            }else{  //图片未加载--加载图片，加入缓存
                 img = new Image();
                 img.className += 'previewImage-image';
                 _this.imgLoadCache[hash] = {isload:false,elem:img};
-                if(i == _this.index){
+                if(i == _this.index){   //将当前需要预览的图片加载
                     img.src = v;
                     img.onload = function(){
                         _this.imgLoadCache[hash].isload = true;
@@ -156,17 +157,17 @@
                 }
             }
             _this.imgStatusCache[i] = {hash:hash,x:0,m:0,y:0,my:0,scale:_this.scale,scalem:1};  //修改缓存状态
-            img.setAttribute("data-index",i);
+            // img.setAttribute("data-index",i);  //未使用
             div.className+='previewImage-item';
             div.appendChild(img);
-            _this.$box.appendChild(div);
+            _this.$box.appendChild(div); //将图片div加入 图片容器
         })
         
         this.$container.appendChild(this.$box);    //加载图片容器
         this.$container.appendChild(this.$text);    //加载图片张数提示
-        var offsetX = -this.imageChageMoveX*this.index;  //计算容器偏移量
-        this.box.x = offsetX;
-        this.container.x = 0;
+        var offsetX = -this.imageChageMoveX*this.index;  //计算显示当前图片，容器所需偏移量
+        this.box.x = offsetX;   //将图片容器所需偏移量，存入状态缓存器
+        this.container.x = 0;   //显示预览模块
         setTimeout(function(){
             _this.translateScale(_this.bIndex,0);
             _this.translateScale(_this.cIndex,_this.openTime);
@@ -546,9 +547,9 @@
      * @param {[string]} value [css value]
      */
     _previewImage.prototype.addCssPrefix = function(elem,prop,value){    //可以优化todo
-        for(var i in this.prefix){
-            var prefix = this.prefix[i];
-            if(prefix===""){
+        for(var i in this.cssprefix){
+            var cssprefix = this.cssprefix[i];
+            if(cssprefix===""){
                 prop = prop.toLowerCase();
             }else{
                 var len = prop.length;
