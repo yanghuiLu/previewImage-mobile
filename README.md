@@ -27,5 +27,6 @@ And you can import dist/md5.js to your project,if imported it is uesd to get the
     </script>
 ```
 # Demo
-![](image/qrcode.png)
-[demo](http://www.luyanghui.com/mylearn/package/previewimage) 
+![](image/qrcode.png)  
+
+[Demo](http://www.luyanghui.com/mylearn/package/previewimage) 
