@@ -16,7 +16,7 @@
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function(window){
     var $ = {};
-    var style = "#__previewImage-container{-ms-touch-action:none;touch-action:none;-webkit-touch-action:none;line-height:100vh;background-color:#000;width:100%;height:100%;position:fixed;overflow:hidden;top:0;left:0;z-index: 2147483647;transition:transform .3s;-ms-transition:transform .3s;-moz-transition:transform .3s;-webkit-transition:transform .3s;-o-transition:transform .3s;transform:translate3d(100%,0,0);-webkit-transform:translate3d(100%,0,0);-ms-transform:translate3d(100%,0,0);-o-transform:translate3d(100%,0,0);-moz-transform:translate3d(100%,0,0)}#__previewImage-container .previewImage-text{height:1em;width:100%;position:absolute;top:.4em;text-align:center;font-size:3vh;line-height:3vh;color:#fff;z-index:10}#__previewImage-container .previewImage-box{width:999999rem;height:100%}#__previewImage-container .previewImage-box .previewImage-item{width:100vw;height:100vh;margin-right:15px;float:left;text-align:center;background:url(http://static.luyanghui.com/svg/oval.svg) no-repeat center/auto}#__previewImage-container .previewImage-box .previewImage-item .previewImage-image{vertical-align:middle;width:100%}";
+    var style = "#__previewImage-container{-ms-touch-action:none;touch-action:none;-webkit-touch-action:none;line-height:100vh;background-color:#000;width:100%;height:100%;position:fixed;overflow:hidden;top:0;left:0;/*z-index: 2147483647;*/transition:transform .3s;-ms-transition:transform .3s;-moz-transition:transform .3s;-webkit-transition:transform .3s;-o-transition:transform .3s;transform:translate3d(100%,0,0);-webkit-transform:translate3d(100%,0,0);-ms-transform:translate3d(100%,0,0);-o-transform:translate3d(100%,0,0);-moz-transform:translate3d(100%,0,0)}#__previewImage-container .previewImage-text{height:1em;width:100%;position:absolute;top:.4em;text-align:center;font-size:3vh;line-height:3vh;color:#fff;z-index:10}#__previewImage-container .previewImage-box{width:999999rem;height:100%}#__previewImage-container .previewImage-box .previewImage-item{width:100vw;height:100vh;margin-right:15px;float:left;text-align:center;background:url(http://static.luyanghui.com/svg/oval.svg) no-repeat center/auto}#__previewImage-container .previewImage-box .previewImage-item.previewImage-nobackground{background:none}#__previewImage-container .previewImage-box .previewImage-item .previewImage-image{vertical-align:middle;width:100%}";
     $.isArray = function(value) {
       return Object.prototype.toString.call(value) == '[object Array]';
     }
@@ -75,6 +75,7 @@
         this.imageChageMoveX = this.marginRight+this.winw;  //图片切换容器的x位移量
         this.imageChageNeedX = Math.floor(this.winw*(0.5)); //图片切换所需x位移量
         this.cssprefix = ["","webkit","Moz","ms","o"]; //css前缀
+        this.version = '1.0.1'; //版本号
         this.imgLoadCache = new Object();  //图片加载状态储存 key=md5(img.src),value={isload:true,elem:img};
         this.scale = 1;     //默认图片放大倍数
         this.maxScale = 4;  //图片默认最大放大倍数
@@ -85,6 +86,7 @@
         this.$box = false;  //图片容器加载状态
         var $style = document.createElement('style');   //样式标签
         $style.innerText = style;   //加载样式
+        $style.type = 'text/css';
         this.$container = document.createElement('div');    //加载容器
         this.$container.id = '__previewImage-container';    //容器加上id
         this.$container.style.width = this.winw+'px';   //加上宽度
@@ -152,13 +154,14 @@
                 if(i == _this.index){   //将当前需要预览的图片加载
                     img.src = v;
                     img.onload = function(){
+                        div.className+=" previewImage-nobackground";
                         _this.imgLoadCache[hash].isload = true;
                     }
                 }
             }
             _this.imgStatusCache[i] = {hash:hash,x:0,m:0,y:0,my:0,scale:_this.scale,scalem:1};  //修改缓存状态
             // img.setAttribute("data-index",i);  //未使用
-            div.className+='previewImage-item';
+            div.className+=' previewImage-item';
             div.appendChild(img);
             _this.$box.appendChild(div); //将图片div加入 图片容器
         })
@@ -207,6 +210,8 @@
     _previewImage.prototype.touchStartFun = function(imgitem){
         this.ts = this.getTouches();
         this.allowMove = true;  //行为标记
+        this.statusX = 0; //标记X轴位移状态
+        this.statusY = 0; //标记Y轴位移状态
     }
 
     _previewImage.prototype.touchMoveFun = function(imgitem){
@@ -237,35 +242,27 @@
         var imgPositionY = imgStatus.y+y0_offset;
         var allow = this.getAllow(this.index);
         var allowX = this.allowX = allow.x;
-        var allowY = this.allowY = allow.y;
+        var allowY = this.allowY = allow.y0;
         if(x0_offset<=0){  //边界
             this.allowX = -allowX;
         }
         if(y0_offset<=0){   //边界
-            this.allowY = -allowY;
+            allowY = this.allowY = allow.y1;
         }
-        this.statusX = 0; //标记X轴位移状态
-        this.statusY = 0; //标记Y轴位移状态
         if(tm.length==1){   //单手指(图片位移)
-            // x0_offset = x0_offset/imgStatus.scale;
-            // y0_offset = y0_offset/imgStatus.scale;
             if(imgStatus.scale>1){ 
                 //Y方向位移
-                if(allowY>0){   //只有图片高度超过窗口高度时执行
-                    if(imgPositionY>=allowY){  //超过窗口下边界
-                        this.statusY = 1;
-                        this.YY = 1;
-                        var overY = imgPositionY - allowY;
-                        imgStatus.my = allowY-imgStatus.y+this.getSlowlyNum(overY,maxWidth);
-                    }else if(imgPositionY<=-allowY){ //超过下窗口上边界
-                        this.statusY = 1;
-                        this.YY = 2;
-                        var overY = imgPositionY + allowY;
-                        imgStatus.my = -allowY-imgStatus.y+this.getSlowlyNum(overY,maxWidth);
-                    }else{
-                        this.statusY = 2;
-                        imgStatus.my = y0_offset;
-                    }
+                if(imgPositionY>=allow.y0){  //超过窗口上边界
+                    this.statusY = 1;
+                    var overY = imgPositionY - allow.y0;
+                    imgStatus.my = allow.y0-imgStatus.y+this.getSlowlyNum(overY,maxWidth);
+                }else if(imgPositionY<=allow.y1){ //超过窗口下边界
+                    this.statusY = 1;
+                    var overY = imgPositionY - allow.y1;
+                    imgStatus.my = allow.y1-imgStatus.y+this.getSlowlyNum(overY,maxWidth); 
+                }else{
+                    this.statusY = 2;
+                    imgStatus.my = y0_offset;
                 }
                 
                 //X方向位移
@@ -304,17 +301,44 @@
                     this.translateScale(this.index,0);
                 }
             }else{  //scale == 1;
-                this.statusX = 5;
-                if((this.index==0&&x0_offset>0)||(this.index==this.maxLen&&x0_offset<0)){ //box到达左右边界
-                    this.box.m = this.getSlowlyNum(x0_offset);
+                if(Math.abs(y0_offset)>5&&this.statusX != 5){  //长图片处理
+                    var $img = this.getJqElem(this.index);
+                    var imgBottom = $img.height-this.winh;
+                    if(y0_offset>0&&imgPositionY>0){
+                        this.statusX = 7;
+                        this.allowY = 0;
+                        imgStatus.my = - imgStatus.y + this.getSlowlyNum(imgPositionY,maxWidth);
+                    }else if(y0_offset<0&&imgPositionY<-imgBottom){
+                        this.statusX = 7;
+                        if($img.height>this.winh){
+                            var overY = imgPositionY + imgBottom;
+                            this.allowY = -imgBottom;
+                            imgStatus.my = -imgBottom - imgStatus.y + this.getSlowlyNum(overY,maxWidth);
+                        }else{
+                            this.allowY = 0;
+                            imgStatus.my = - imgStatus.y + this.getSlowlyNum(imgPositionY,maxWidth);
+                        }
+                    }else{
+
+                        this.statusX = 6;
+                        imgStatus.my = y0_offset;
+                    }
+                    this.translateScale(this.index,0);
                 }else{
-                    this.box.m = x0_offset;
+                    if(this.statusX == 6){
+                        return
+                    }
+                    this.statusX = 5;
+                    if((this.index==0&&x0_offset>0)||(this.index==this.maxLen&&x0_offset<0)){ //box到达左右边界
+                        this.box.m = this.getSlowlyNum(x0_offset);
+                    }else{
+                        this.box.m = x0_offset;
+                    }
+                    this.translateScale(this.bIndex,0);
                 }
-                this.translateScale(this.bIndex,0);
             }
-            
         }else{  //多手指(图片放大缩小)
-            var scalem = this.getScale(ts,tm);
+            var scalem = this.getScale(ts,tm)
             var scale = scalem*imgStatus.scale;
             if(scale>=this.maxScale){  //达到最大放大倍数
                 var over = scale - this.maxScale;
@@ -390,6 +414,15 @@
                         this.changeIndex(0);
                     }
                 break
+                case 6: //scale=1,长图片
+                    imgStatus.y = imgStatus.y+imgStatus.my;
+                    imgStatus.my = 0;
+                break
+                case 7: //scale=1,长图片 到边界
+                    imgStatus.y = this.allowY;
+                    imgStatus.my = 0;
+                    this.translateScale(this.index,this.slipTime);
+                break
             }
         }else{  // 放大倍数问题
             event.preventDefault();
@@ -407,12 +440,12 @@
                 imgStatus.x = -allow.x;
             }
 
-            if(imgStatus.y>allow.y){
+            if(imgStatus.y>allow.y0){
                 slipTime = this.slipTime; 
-                imgStatus.y = allow.y;
-            }else if(imgStatus.y<-allow.y){
+                imgStatus.y = allow.y0;
+            }else if(imgStatus.y<allow.y1){
                 slipTime = this.slipTime; 
-                imgStatus.y = -allow.y;
+                imgStatus.y = allow.y1;
             }
 
             if($img.height*imgStatus.scale<=this.winh){
@@ -436,18 +469,29 @@
                 this.translateScale(this.index,slipTime);
             }
         }
-    }
+    };
 
     _previewImage.prototype.getAllow = function(index){
         var $img = this.getJqElem(index);
         var imgStatus = this.getIndexImage(index);
         var allowX = Math.floor(($img.width*imgStatus.scale-this.winw)/(2*imgStatus.scale));
-        var allowY = Math.floor(($img.height*imgStatus.scale-this.winh)/(2*imgStatus.scale));
+        var allowY0,allowY1;
+        if($img.height*imgStatus.scale<=this.winh){
+            allowY0 = 0;
+            allowY1 = 0;
+        }else if($img.height<=this.winh){
+            allowY0 = Math.floor(($img.height*imgStatus.scale-this.winh)/(2*imgStatus.scale));
+            allowY1 = -allowY0;
+        }else{
+            allowY0 = Math.floor($img.height*(imgStatus.scale-1)/(2*imgStatus.scale));
+            allowY1 = -Math.floor(($img.height*(imgStatus.scale+1)-2*this.winh)/(2*imgStatus.scale));
+        }
         return {
             x:allowX,
-            y:allowY
-        }
-    }
+            y0:allowY0,
+            y1:allowY1,
+        };
+    };
 
     _previewImage.prototype.getSlowlyNum = function(x,maxOver){
         var maxOver = maxOver||this.winw*this.maxOverWidthPercent;
@@ -457,14 +501,14 @@
         }else{
             return (1-(x/(maxOver+x)))*x;
         }
-    }
+    };
 
     _previewImage.prototype.getScale = function(ts,tm){
         var fingerRangeS = Math.sqrt(Math.pow((ts.x1 - ts.x0),2)+Math.pow((ts.y1-ts.y0),2)); //两手指的初始距离
         var fingerRangeM = Math.sqrt(Math.pow((tm.x1 - tm.x0),2)+Math.pow((tm.y1-tm.y0),2)); //两手指移动过程中的距离
         var range = fingerRangeM/fingerRangeS;
         return range;
-    }
+    };
 
     _previewImage.prototype.imgStatusRewrite = function(index){
         var index = index===undefined?this.index:index;
@@ -496,6 +540,7 @@
             if(!imgCache.isload){    //图片未缓存则加载图片
                 imgCache.elem.src = this.urls[this.index];
                 imgCache.elem.onload = function(){
+                    imgCache.elem.parentNode.className+=" previewImage-nobackground";
                     imgCache.isload = true;
                 }
             }
@@ -574,7 +619,6 @@
         }
         return obj;
     }
-
     window.previewImage = new _previewImage();
     // AMD loader
     if ( typeof define === "function" && define.amd ) {
