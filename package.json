@@ -1,0 +1,17 @@
+{
+  "name": "previewimage-mobile",
+  "version": "1.0.1",
+  "description": "仿微信js-sdk wx.previewImage javascript实现，支持图片预览，滑动切换，双指缩放，图片缓存;",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yanghuLu",
+  "license": "ISC"
+}
