@@ -622,7 +622,7 @@
     window.previewImage = new _previewImage();
     // AMD loader
     if ( typeof define === "function" && define.amd ) {
-        define( "previewImage", [], function() {
+        define([], function() {
             return previewImage;
         } );
     }
