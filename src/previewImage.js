@@ -75,7 +75,7 @@
         this.imageChageMoveX = this.marginRight+this.winw;  //图片切换容器的x位移量
         this.imageChageNeedX = Math.floor(this.winw*(0.5)); //图片切换所需x位移量
         this.cssprefix = ["","webkit","Moz","ms","o"]; //css前缀
-        this.version = '1.0.1'; //版本号
+        this.version = '1.0.2'; //版本号
         this.imgLoadCache = new Object();  //图片加载状态储存 key=md5(img.src),value={isload:true,elem:img};
         this.scale = 1;     //默认图片放大倍数
         this.maxScale = 4;  //图片默认最大放大倍数
@@ -147,6 +147,7 @@
             //缓存图片&&读取缓存图片
             if(imgCache&&imgCache.isload){    //图片已加载--使用缓存
                 img = imgCache.elem;
+                div.className+=" previewImage-nobackground";
             }else{  //图片未加载--加载图片，加入缓存
                 img = new Image();
                 img.className += 'previewImage-image';
@@ -543,6 +544,8 @@
                     imgCache.elem.parentNode.className+=" previewImage-nobackground";
                     imgCache.isload = true;
                 }
+            }else{
+                imgCache.elem.parentNode.className+=" previewImage-nobackground";
             }
         }
         this.box.x = -this.imageChageMoveX*this.index;
