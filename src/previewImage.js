@@ -16,7 +16,7 @@
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function(window){
     var $ = {};
-    var style = "#__previewImage-container{-ms-touch-action:none;touch-action:none;-webkit-touch-action:none;line-height:100vh;background-color:#000;width:100%;height:100%;position:fixed;overflow:hidden;top:0;left:0;z-index: 2147483647;transition:transform .3s;-ms-transition:transform .3s;-moz-transition:transform .3s;-webkit-transition:transform .3s;-o-transition:transform .3s;transform:translate3d(100%,0,0);-webkit-transform:translate3d(100%,0,0);-ms-transform:translate3d(100%,0,0);-o-transform:translate3d(100%,0,0);-moz-transform:translate3d(100%,0,0)}#__previewImage-container .previewImage-text{height:1em;width:100%;position:absolute;top:.4em;text-align:center;font-size:3vh;line-height:3vh;color:#fff;z-index:10}#__previewImage-container .previewImage-box{width:999999rem;height:100%}#__previewImage-container .previewImage-box .previewImage-item{width:100vw;height:100vh;margin-right:15px;float:left;text-align:center;background:url(http://static.luyanghui.com/svg/oval.svg) no-repeat center/auto}#__previewImage-container .previewImage-box .previewImage-item.previewImage-nobackground{background:none}#__previewImage-container .previewImage-box .previewImage-item .previewImage-image{vertical-align:middle;width:100%}";
+    var style = "#__previewImage-container{-ms-touch-action:none;touch-action:none;-webkit-touch-action:none;line-height:100vh;background-color:#000;width:100vw;height:100vh;position:fixed;overflow:hidden;top:0;left:0;z-index: 2147483647;transition:transform .3s;-ms-transition:transform .3s;-moz-transition:transform .3s;-webkit-transition:transform .3s;-o-transition:transform .3s;transform:translate3d(100%,0,0);-webkit-transform:translate3d(100%,0,0);-ms-transform:translate3d(100%,0,0);-o-transform:translate3d(100%,0,0);-moz-transform:translate3d(100%,0,0)}#__previewImage-container .previewImage-text{position:absolute;top:.6em;text-align:center;font-size:18px;line-height:25px;color:#fff;z-index:10;padding: 0.2em 0.4em;background-color: rgba(255,255,255,0.4);border-radius: 50%;letter-spacing: 0;right:.8em}#__previewImage-container .previewImage-text .previewImage-text-index{font-size: 24px;}#__previewImage-container .previewImage-box{width:999999rem;height:100vh}#__previewImage-container .previewImage-box .previewImage-item{width:100vw;height:100vh;margin-right:15px;float:left;text-align:center;background:url(http://static.luyanghui.com/svg/oval.svg) no-repeat center/auto}#__previewImage-container .previewImage-box .previewImage-item.previewImage-nobackground{background:none}#__previewImage-container .previewImage-box .previewImage-item .previewImage-image{vertical-align:middle;width:100%}";
     $.isArray = function(value) {
       return Object.prototype.toString.call(value) == '[object Array]';
     }
@@ -71,6 +71,8 @@
     var _previewImage = function(){
         this.winw = window.innerWidth||document.body.clientWidth;  //窗口的宽度
         this.winh = window.innerHeight||document.body.clientHeight; //窗口的高度
+        this.originWinw = this.winw;    //存储源窗口的宽度
+        this.originWinh = this.winh;    //存储源窗口的高度
         this.marginRight = 15;  //图片之间的间隔->previewImage-item的margin-right
         this.imageChageMoveX = this.marginRight+this.winw;  //图片切换容器的x位移量
         this.imageChageNeedX = Math.floor(this.winw*(0.5)); //图片切换所需x位移量
@@ -83,7 +85,9 @@
         // this.minScale = 0.5; //图片最小可放大倍数
         this.openTime = 0.3;    //打开图片浏览动画时间
         this.slipTime = 0.5;    //图片切换时间
+        this.maxOverWidthPercent = 0.5; //边界图片最大可拉取宽度，屏幕宽度的百分比
         this.$box = false;  //图片容器加载状态
+        this.isPreview = false; //是否正在预览图片
         var $style = document.createElement('style');   //样式标签
         $style.innerText = style;   //加载样式
         $style.type = 'text/css';
@@ -119,7 +123,6 @@
         this.maxLen = urls.length-1;  //最大图片数 0<=index<=maxLen
         this.cIndex = this.maxLen+1;    //containerIndex
         this.bIndex = this.maxLen+2;    //boxIndex
-        this.maxOverWidthPercent = 0.5; //边界图片最大可拉取宽度，屏幕宽度的百分比
         this.imgStatusCache = new Object(); //图片信息储存
         this.render();                //渲染预览模块
     }
@@ -136,7 +139,7 @@
         var text = document.createElement('div');   //当前张数/总张数--文本标签
         this.$text = text;
         this.$text.className += 'previewImage-text';
-        this.$text.innerText = (this.index+1)+"/"+(this.maxLen+1);    //当前第几张/图片总数
+        this.$text.innerHTML = "<span class='previewImage-text-index'>"+(this.index+1)+"/</span>"+(this.maxLen+1);    //当前第几张/图片总数
         this.container = this.imgStatusCache[this.cIndex] = {elem:this.$container,x:this.winw,y:0,m:0,my:0,scale:1,scalem:1}; //存储容器状态
         this.box = this.imgStatusCache[this.bIndex] = {elem:this.$box,x:0,y:0,m:0,my:0,scale:1,scalem:1};   //存储图片容器状态
         this.urls.forEach(function(v,i){    //图片
@@ -172,9 +175,11 @@
         var offsetX = -this.imageChageMoveX*this.index;  //计算显示当前图片，容器所需偏移量
         this.box.x = offsetX;   //将图片容器所需偏移量，存入状态缓存器
         this.container.x = 0;   //显示预览模块
+        this.$container.style.display = "block";
         setTimeout(function(){
             _this.translateScale(_this.bIndex,0);
             _this.translateScale(_this.cIndex,_this.openTime);
+            _this.isPreview = true;
         },50);
     }
 
@@ -194,6 +199,28 @@
             _this.touchEndFun.call(_this);
         }
 
+        var orientationChangeFun = function(){
+            var angle = screen.orientation.angle;
+            var _this = this;
+            if(angle==90||angle==180){
+                _this.winw = _this.originWinh;
+                _this.winh = _this.originWinw;
+            }else{
+                _this.winw = _this.originWinw;
+                _this.winh = _this.originWinh;
+            }
+            _this.$container.style.width = _this.winw+'px';   //改变宽度
+            _this.$container.style.height = _this.winh+'px';  //改变高度
+            _this.imageChageMoveX = _this.marginRight+_this.winw;
+            var offsetX = -_this.imageChageMoveX*_this.index;  //计算显示当前图片，容器所需偏移量
+            try{
+                _this.box.x = offsetX;   //将图片容器所需偏移量，存入状态缓存器
+                _this.translateScale(_this.bIndex,0);
+            }catch(e){}
+        }.bind(this);
+
+        window.addEventListener("orientationchange",orientationChangeFun,false);
+        // screen.orientation.addEventListener("change",orientationChangeFun, false);
         $.delegate($container,'click','.previewImage-item',closePreview);
         $.delegate($container,'touchstart','.previewImage-item',touchStartFun);
         $.delegate($container,'touchmove','.previewImage-item',touchMoveFun);
@@ -202,10 +229,15 @@
     }
 
     _previewImage.prototype.closePreview = function(){
+        var _this = this;
         this.imgStatusCache[this.cIndex].x = this.winw;
         this.translateScale(this.cIndex,this.openTime);
         this.imgStatusRewrite();
         this.translateScale(this.index,this.slipTime);
+        setTimeout(function(){
+            _this.$container.style.display = "none";
+        },this.slipTime*1000);
+        _this.isPreview = false;
     }
 
     _previewImage.prototype.touchStartFun = function(imgitem){
@@ -535,7 +567,7 @@
             this.index = this.index;
         }else{
             this.index+=x;
-            this.$text.innerText = (this.index+1)+"/"+(this.maxLen+1);
+            this.$text.innerHTML = "<span class='previewImage-text-index'>"+(this.index+1)+"/</span>"+(this.maxLen+1);    //当前第几张/图片总数
             var hash = this.imgStatusCache[this.index].hash;
             var imgCache = this.imgLoadCache[hash];
             if(!imgCache.isload){    //图片未缓存则加载图片
