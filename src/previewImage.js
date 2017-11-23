@@ -77,7 +77,7 @@
         this.imageChageMoveX = this.marginRight+this.winw;  //图片切换容器的x位移量
         this.imageChageNeedX = Math.floor(this.winw*(0.5)); //图片切换所需x位移量
         this.cssprefix = ["","webkit","Moz","ms","o"]; //css前缀
-        this.version = '1.0.2'; //版本号
+        this.version = '1.0.3'; //版本号
         this.imgLoadCache = new Object();  //图片加载状态储存 key=md5(img.src),value={isload:true,elem:img};
         this.scale = 1;     //默认图片放大倍数
         this.maxScale = 4;  //图片默认最大放大倍数
@@ -199,16 +199,32 @@
             _this.touchEndFun.call(_this);
         }
 
-        var orientationChangeFun = function(){
-            var angle = screen.orientation.angle;
+        // var orientationChangeFun = function(){
+        //     var angle = screen.orientation.angle;
+        //     var _this = this;
+        //     if(angle==90||angle==180){
+        //         _this.winw = _this.originWinh;
+        //         _this.winh = _this.originWinw;
+        //     }else{
+        //         _this.winw = _this.originWinw;
+        //         _this.winh = _this.originWinh;
+        //     }
+        //     _this.$container.style.width = _this.winw+'px';   //改变宽度
+        //     _this.$container.style.height = _this.winh+'px';  //改变高度
+        //     _this.imageChageMoveX = _this.marginRight+_this.winw;
+        //     var offsetX = -_this.imageChageMoveX*_this.index;  //计算显示当前图片，容器所需偏移量
+        //     try{
+        //         _this.box.x = offsetX;   //将图片容器所需偏移量，存入状态缓存器
+        //         _this.translateScale(_this.bIndex,0);
+        //     }catch(e){}
+        // }.bind(this);
+
+        var reSizeFun = function(){
             var _this = this;
-            if(angle==90||angle==180){
-                _this.winw = _this.originWinh;
-                _this.winh = _this.originWinw;
-            }else{
-                _this.winw = _this.originWinw;
-                _this.winh = _this.originWinh;
-            }
+            _this.winw = window.innerWidth||document.body.clientWidth;  //窗口的宽度
+            _this.winh = window.innerHeight||document.body.clientHeight; //窗口的高度
+            _this.originWinw = _this.winw;    //存储源窗口的宽度
+            _this.originWinh = _this.winh;    //存储源窗口的高度
             _this.$container.style.width = _this.winw+'px';   //改变宽度
             _this.$container.style.height = _this.winh+'px';  //改变高度
             _this.imageChageMoveX = _this.marginRight+_this.winw;
@@ -219,8 +235,8 @@
             }catch(e){}
         }.bind(this);
 
-        window.addEventListener("orientationchange",orientationChangeFun,false);
-        // screen.orientation.addEventListener("change",orientationChangeFun, false);
+        // window.addEventListener("orientationchange",orientationChangeFun,false);
+        window.addEventListener("resize",reSizeFun,false);
         $.delegate($container,'click','.previewImage-item',closePreview);
         $.delegate($container,'touchstart','.previewImage-item',touchStartFun);
         $.delegate($container,'touchmove','.previewImage-item',touchMoveFun);
