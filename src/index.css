@@ -1,0 +1,155 @@
+#__previewImage-container {
+    -ms-touch-action: none;
+    touch-action: none;
+    -webkit-touch-action: none;
+    line-height: 100vh;
+    background-color: #000;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    z-index: 2147483647;
+    transition: transform .3s;
+    -ms-transition: transform .3s;
+    -moz-transition: transform .3s;
+    -webkit-transition: transform .3s;
+    -o-transition: transform .3s;
+    transform: translate3d(100%, 0, 0);
+    -webkit-transform: translate3d(100%, 0, 0);
+    -ms-transform: translate3d(100%, 0, 0);
+    -o-transform: translate3d(100%, 0, 0);
+    -moz-transform: translate3d(100%, 0, 0)
+}
+
+#__previewImage-container .previewImage-text {
+    position: absolute;
+    top: .6em;
+    text-align: center;
+    font-size: 18px;
+    line-height: 25px;
+    color: #fff;
+    z-index: 10;
+    padding: 0.2em 0.4em;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    letter-spacing: 0;
+    left: .8em;
+}
+
+#__previewImage-container .previewImage-moreOpration {
+    display: flex;
+    position: absolute;
+    top: 1em;
+    text-align: center;
+    font-size: 18px;
+    line-height: 25px;
+    color: #fff;
+    z-index: 10;
+    padding: 0.2em 0.1em;
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 50%;
+    letter-spacing: 0;
+    right: .8em;
+}
+
+#__previewImage-container .previewImage-pointer {
+    width: 0.5rem;
+    height: 0.5rem;
+    left: 0.2rem;
+    margin-left: 0.2rem;
+    background-color: #fdf9f9;
+    border-radius: 100%;
+    box-shadow: 0 3px black;
+}
+
+#__previewImage-container .previewImage-text .previewImage-text-index {
+    font-size: 24px;
+}
+
+#__previewImage-container .previewImage-box {
+    width: 999999rem;
+    height: 100vh
+}
+
+#__previewImage-container .previewImage-box .previewImage-item {
+    width: 100vw;
+    height: 100vh;
+    margin-right: 15px;
+    float: left;
+    text-align: center;
+    background: url(http://static.luyanghui.com/svg/oval.svg) no-repeat center/auto
+}
+
+#__previewImage-container .previewImage-box .previewImage-item.previewImage-nobackground {
+    background: none
+}
+
+#__previewImage-container .previewImage-box .previewImage-item .previewImage-image {
+    vertical-align: middle;
+    width: 100%
+}
+
+#__previewImage-container .previewImage-moreOprationPlane {
+    width: 100%;
+    height: 23%;
+    position: absolute;
+    bottom: 0px;
+    background-color: #ffffffc2;
+    display: flex;
+    flex-direction: column;
+}
+
+#__previewImage-container .lanmu {
+    align-items: center;
+    display: flex;
+    height: 60%;
+    opacity: 0.8;
+    background-color: #ffffff;
+}
+
+#__previewImage-container .previewImage-moreCancel {
+    background-color: white;
+    height: 40%;
+    text-align: center;
+    color: #837e7e;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+#__previewImage-container .previewImage-oprItem {
+    width: 5rem;
+    height: 5rem;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#__previewImage-container .previewImage-OprimageDiv {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+}
+
+#__previewImage-container .previewImage-Oprimage {
+    width: 100%;
+    height: 100%;
+}
+
+#__previewImage-container .previewImage-OprtextIdv {
+    width: 5rem;
+    height: 1rem;
+    color: #7f7777;
+    line-height: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.5rem;
+}
+
+
+
+
+
+
