@@ -296,6 +296,10 @@
         this.allowMove = true;  //行为标记
         this.statusX = 0; //标记X轴位移状态
         this.statusY = 0; //标记Y轴位移状态
+        var _this = this;
+        this.timeer = setTimeout(function(e){
+            _this.openMoreOpr();
+        },1500);
     }
 
     _previewImage.prototype.touchMoveFun = function(imgitem){
@@ -435,6 +439,9 @@
     }
 
     _previewImage.prototype.endAction = function(ts,te){
+        if(!!this.timeer){
+            clearTimeout(this.timeer);
+        }
         var imgStatus = this.getIndexImage();
         var x0_offset = te.x0 - ts.x0;
         var y0_offset = te.y0 - ts.y0;
