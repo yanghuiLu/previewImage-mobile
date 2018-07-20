@@ -55,8 +55,8 @@
 }
 
 #__previewImage-container .previewImage-pointer {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: .35rem;
+    height: .35rem;
     left: 0.2rem;
     margin-left: 0.2rem;
     background-color: #fdf9f9;
@@ -104,14 +104,13 @@
 #__previewImage-container .lanmu {
     align-items: center;
     display: flex;
-    height: 60%;
-    opacity: 0.8;
-    background-color: #ffffff;
+    height: 70%;
+    background-color: #ebebeb;
 }
 
 #__previewImage-container .previewImage-moreCancel {
     background-color: white;
-    height: 40%;
+    height: 30%;
     text-align: center;
     color: #837e7e;
     align-items: center;
@@ -142,11 +141,28 @@
 #__previewImage-container .previewImage-OprtextIdv {
     width: 5rem;
     height: 1rem;
-    color: #7f7777;
+    color: #1a1a1a;
     line-height: 1rem;
     margin-top: 0.5rem;
     font-size: 0.5rem;
+    text-align: center;
 }
+
+
+#__previewImage-container .previewImage-toast{
+    position: absolute;
+    width: 40%;
+    height: 7%;
+    top: 40%;
+    left: 32%;
+    background-color: #313131;
+    border-radius: 4%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+}
+
 
 
 
