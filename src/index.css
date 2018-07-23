@@ -121,15 +121,15 @@
 #__previewImage-container .previewImage-oprItem {
     width: 5rem;
     height: 5rem;
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 #__previewImage-container .previewImage-OprimageDiv {
-    width: 3rem;
-    height: 3rem;
+    width: 2.4rem;
+    height: 2.4rem;
     display: flex;
 }
 
@@ -161,6 +161,7 @@
     justify-content: center;
     flex-direction: column;
     color: white;
+    text-align: center;
 }
 
 
