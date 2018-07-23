@@ -16,7 +16,7 @@
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function(window){
     var $ = {};
-    var style = "#__previewImage-container{-ms-touch-action:none;touch-action:none;-webkit-touch-action:none;line-height:100vh;background-color:#000;width:100vw;height:100vh;position:fixed;overflow:hidden;top:0;left:0;z-index: 2147483647;transition:transform .3s;-ms-transition:transform .3s;-moz-transition:transform .3s;-webkit-transition:transform .3s;-o-transition:transform .3s;transform:translate3d(100%,0,0);-webkit-transform:translate3d(100%,0,0);-ms-transform:translate3d(100%,0,0);-o-transform:translate3d(100%,0,0);-moz-transform:translate3d(100%,0,0)}#__previewImage-container .previewImage-text{position:absolute;top:.6em;text-align:center;font-size:18px;line-height:25px;color:#fff;z-index:10;padding: 0.2em 0.4em;background-color: rgba(255,255,255,0.4);border-radius: 50%;letter-spacing: 0;right:.8em}#__previewImage-container .previewImage-text .previewImage-text-index{font-size: 24px;}#__previewImage-container .previewImage-box{width:999999rem;height:100vh}#__previewImage-container .previewImage-box .previewImage-item{width:100vw;height:100vh;margin-right:15px;float:left;text-align:center;background:url(http://static.luyanghui.com/svg/oval.svg) no-repeat center/auto}#__previewImage-container .previewImage-box .previewImage-item.previewImage-nobackground{background:none}#__previewImage-container .previewImage-box .previewImage-item .previewImage-image{vertical-align:middle;width:100%}";
+    var style = "#__previewImage-container{-ms-touch-action:none;touch-action:none;-webkit-touch-action:none;line-height:100vh;background-color:#000;width:100vw;height:100vh;position:fixed;overflow:hidden;top:0;left:0;z-index:2147483647;transition:transform .3s;-ms-transition:transform .3s;-moz-transition:transform .3s;-webkit-transition:transform .3s;-o-transition:transform .3s;transform:translate3d(100%,0,0);-webkit-transform:translate3d(100%,0,0);-ms-transform:translate3d(100%,0,0);-o-transform:translate3d(100%,0,0);-moz-transform:translate3d(100%,0,0)}#__previewImage-container .previewImage-moreOpration,#__previewImage-container .previewImage-text{font-size:18px;line-height:25px;color:#fff;z-index:10;border-radius:50%;letter-spacing:0;position:absolute;text-align:center}#__previewImage-container .previewImage-text{top:.6em;padding:.2em .4em;background-color:rgba(255,255,255,.4);left:.8em}#__previewImage-container .previewImage-moreOpration{display:flex;top:1em;padding:.2em .1em;background-color:rgba(255,255,255,0);right:.8em}#__previewImage-container .previewImage-pointer{width:.35rem;height:.35rem;left:.2rem;margin-left:.2rem;background-color:#fdf9f9;border-radius:100%;box-shadow:0 3px #000}#__previewImage-container .previewImage-text .previewImage-text-index{font-size:24px}#__previewImage-container .previewImage-box{width:999999rem;height:100vh}#__previewImage-container .previewImage-box .previewImage-item{width:100vw;height:100vh;margin-right:15px;float:left;text-align:center;background:url(http://static.luyanghui.com/svg/oval.svg) center no-repeat}#__previewImage-container .previewImage-box .previewImage-item.previewImage-nobackground{background:0 0}#__previewImage-container .previewImage-box .previewImage-item .previewImage-image{vertical-align:middle;width:100%}#__previewImage-container .previewImage-moreOprationPlane{width:100%;height:23%;position:absolute;bottom:0;background-color:#fffc2;display:flex;flex-direction:column}#__previewImage-container .lanmu{align-items:center;display:flex;height:70%;background-color:#ebebeb}#__previewImage-container .previewImage-moreCancel{background-color:#fff;height:30%;text-align:center;color:#837e7e;align-items:center;display:flex;justify-content:center}#__previewImage-container .previewImage-oprItem{width:5rem;height:5rem;margin-top:1.5rem;display:flex;flex-direction:column;align-items:center}#__previewImage-container .previewImage-OprimageDiv{width:2.4rem;height:2.4rem;display:flex}#__previewImage-container .previewImage-Oprimage{width:100%;height:100%}#__previewImage-container .previewImage-OprtextIdv{width:5rem;height:1rem;color:#1a1a1a;line-height:1rem;margin-top:.5rem;font-size:.5rem;text-align:center}#__previewImage-container .previewImage-toast{position:absolute;width:40%;height:7%;top:40%;left:32%;background-color:#313131;border-radius:4%;display:flex;justify-content:center;flex-direction:column;color:#fff;text-align:center}";
     $.isArray = function(value) {
       return Object.prototype.toString.call(value) == '[object Array]';
     }
@@ -88,6 +88,7 @@
         this.maxOverWidthPercent = 0.5; //边界图片最大可拉取宽度，屏幕宽度的百分比
         this.$box = false;  //图片容器加载状态
         this.isPreview = false; //是否正在预览图片
+        this.isOpenMoreOpr = false; //打开了更多操作
         var $style = document.createElement('style');   //样式标签
         $style.innerText = style;   //加载样式
         $style.type = 'text/css';
@@ -109,7 +110,7 @@
             return
         }
         if(!current){   //参数检测
-            this.index = 0; 
+            this.index = 0;
             console.warn("current is empty,it will be the first value of urls!");
         }else{
             var index = urls.indexOf(current);
@@ -119,6 +120,9 @@
             }
             this.index = index; //当前图片序号
         }
+        //测试传入的配置参数
+        this.buttons = obj.buttons || [];
+
         this.urls = urls;   //所有图片url列表
         this.maxLen = urls.length-1;  //最大图片数 0<=index<=maxLen
         this.cIndex = this.maxLen+1;    //containerIndex
@@ -169,7 +173,12 @@
             div.appendChild(img);
             _this.$box.appendChild(div); //将图片div加入 图片容器
         })
-        
+        var moreOptions =  document.createElement('div');   //是哪个点 更多操作
+        this.$moreOptions = moreOptions;
+        this.$moreOptions.className += "previewImage-moreOpration";
+        this.$moreOptions.innerHTML = '<div class="previewImage-pointer"></div><div class="previewImage-pointer"></div><div class="previewImage-pointer"></div>';
+        this.$container.appendChild(this.$moreOptions); //加载更多操作按钮
+
         this.$container.appendChild(this.$box);    //加载图片容器
         this.$container.appendChild(this.$text);    //加载图片张数提示
         var offsetX = -this.imageChageMoveX*this.index;  //计算显示当前图片，容器所需偏移量
@@ -198,26 +207,10 @@
         var touchEndFun = function(){
             _this.touchEndFun.call(_this);
         }
+        var openMoreOpr = function(){
+            _this.openMoreOpr.call(_this);
+        }
 
-        // var orientationChangeFun = function(){
-        //     var angle = screen.orientation.angle;
-        //     var _this = this;
-        //     if(angle==90||angle==180){
-        //         _this.winw = _this.originWinh;
-        //         _this.winh = _this.originWinw;
-        //     }else{
-        //         _this.winw = _this.originWinw;
-        //         _this.winh = _this.originWinh;
-        //     }
-        //     _this.$container.style.width = _this.winw+'px';   //改变宽度
-        //     _this.$container.style.height = _this.winh+'px';  //改变高度
-        //     _this.imageChageMoveX = _this.marginRight+_this.winw;
-        //     var offsetX = -_this.imageChageMoveX*_this.index;  //计算显示当前图片，容器所需偏移量
-        //     try{
-        //         _this.box.x = offsetX;   //将图片容器所需偏移量，存入状态缓存器
-        //         _this.translateScale(_this.bIndex,0);
-        //     }catch(e){}
-        // }.bind(this);
 
         var reSizeFun = function(){
             var _this = this;
@@ -242,10 +235,70 @@
         $.delegate($container,'touchmove','.previewImage-item',touchMoveFun);
         $.delegate($container,'touchend','.previewImage-item',touchEndFun);
         $.delegate($container,'touchcancel','.previewImage-item',touchEndFun);
+        //点击更多操作的事件
+        $.delegate($container,'click','.previewImage-moreOpration',openMoreOpr);
+        $.delegate(_this.$container,'click','.previewImage-moreCancel',function(e){
+            _this.$container.removeChild(document.getElementsByClassName("previewImage-moreOprationPlane")[0]);
+            _this.isOpenMoreOpr = false;
+        });
+
+        $.delegate(_this.$container,'click','.previewImage-oprItem',function(e){
+            var index = e.target.getAttribute("data-index")
+            if(!!_this.buttons[index].clickFunc){
+                _this.buttons[index].clickFunc(_this.urls[_this.index]);
+                //隐藏
+                _this.isOpenMoreOpr = false;
+                _this.$container.removeChild(document.getElementsByClassName("previewImage-moreOprationPlane")[0]);
+            }
+        });
+    }
+
+    _previewImage.prototype.openMoreOpr = function(){
+        var _this = this;
+        if(!_this.isOpenMoreOpr){
+            //展开更多面板
+            var moreOprP = document.createElement('div');
+            this.$moreOprP = moreOprP;
+            var oprItemButtonStr = "";
+            for(var i =0; i < this.buttons.length; i++){
+                oprItemButtonStr += '<div class="previewImage-oprItem" data-index='+i+'>\
+                                        <div class="previewImage-OprimageDiv" data-index='+i+'>\
+                                            <img class="previewImage-Oprimage" src = '+ this.buttons[i].img +' data-index='+i+'>\
+                                        </div>\
+                                        <div class="previewImage-OprtextIdv" data-index='+i+'>'+ this.buttons[i].text +'</div>\
+                                    </div>'
+            }
+            this.$moreOprP.className += 'previewImage-moreOprationPlane';
+            this.$moreOprP.innerHTML = '<div class ="lanmu">'+ oprItemButtonStr +'</div><div class = "previewImage-moreCancel">取 消</div>';
+            this.$container.appendChild(this.$moreOprP);
+            _this.isOpenMoreOpr = true;
+        }else{
+            _this.isOpenMoreOpr = false;
+            _this.$container.removeChild(document.getElementsByClassName("previewImage-moreOprationPlane")[0]);
+        }
+    }
+
+    _previewImage.prototype.toast = function(text){
+        var _this = this;
+        var toast_p = document.createElement('div');
+        _this.$toast_p = toast_p;
+        _this.$toast_p.className += 'previewImage-toast';
+        _this.$toast_p.innerHTML = text;
+        _this.$container.appendChild(_this.$toast_p);
+        setTimeout(function(){
+            _this.$container.removeChild(document.getElementsByClassName("previewImage-toast")[0]);
+        }, 800);
     }
 
     _previewImage.prototype.closePreview = function(){
         var _this = this;
+        if( _this.isOpenMoreOpr){
+             //隐藏
+             _this.isOpenMoreOpr = false;
+             _this.$container.removeChild(document.getElementsByClassName("previewImage-moreOprationPlane")[0]);
+             return;
+        }
+
         this.imgStatusCache[this.cIndex].x = this.winw;
         this.translateScale(this.cIndex,this.openTime);
         this.imgStatusRewrite();
@@ -261,6 +314,10 @@
         this.allowMove = true;  //行为标记
         this.statusX = 0; //标记X轴位移状态
         this.statusY = 0; //标记Y轴位移状态
+        var _this = this;
+        this.timeer = setTimeout(function(e){
+            _this.openMoreOpr();
+        },1500);
     }
 
     _previewImage.prototype.touchMoveFun = function(imgitem){
@@ -299,7 +356,7 @@
             allowY = this.allowY = allow.y1;
         }
         if(tm.length==1){   //单手指(图片位移)
-            if(imgStatus.scale>1){ 
+            if(imgStatus.scale>1){
                 //Y方向位移
                 if(imgPositionY>=allow.y0){  //超过窗口上边界
                     this.statusY = 1;
@@ -308,12 +365,12 @@
                 }else if(imgPositionY<=allow.y1){ //超过窗口下边界
                     this.statusY = 1;
                     var overY = imgPositionY - allow.y1;
-                    imgStatus.my = allow.y1-imgStatus.y+this.getSlowlyNum(overY,maxWidth); 
+                    imgStatus.my = allow.y1-imgStatus.y+this.getSlowlyNum(overY,maxWidth);
                 }else{
                     this.statusY = 2;
                     imgStatus.my = y0_offset;
                 }
-                
+
                 //X方向位移
                 if(x0_offset<0&&imgStatus.x<=-allowX){ //左滑->初始状态到达或超过右边界->图片平滑移动到达条件-切换下一张
                     this.statusX = 1;
@@ -400,6 +457,9 @@
     }
 
     _previewImage.prototype.endAction = function(ts,te){
+        if(!!this.timeer){
+            clearTimeout(this.timeer);
+        }
         var imgStatus = this.getIndexImage();
         var x0_offset = te.x0 - ts.x0;
         var y0_offset = te.y0 - ts.y0;
@@ -482,7 +542,7 @@
             var allow = this.getAllow(this.index);
 
             if(imgStatus.x>allow.x){
-                slipTime = this.slipTime; 
+                slipTime = this.slipTime;
                 imgStatus.x = allow.x;
             }else if(imgStatus.x<-allow.x){
                 slipTime = this.slipTime;
@@ -490,10 +550,10 @@
             }
 
             if(imgStatus.y>allow.y0){
-                slipTime = this.slipTime; 
+                slipTime = this.slipTime;
                 imgStatus.y = allow.y0;
             }else if(imgStatus.y<allow.y1){
-                slipTime = this.slipTime; 
+                slipTime = this.slipTime;
                 imgStatus.y = allow.y1;
             }
 
@@ -653,7 +713,7 @@
             }
             if(document.body.style[prop]!==undefined){
                 elem.style[prop] = value;
-                return 
+                return
             }
         }
     }

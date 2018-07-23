@@ -84,15 +84,25 @@
     imgs.forEach(function(v,i){
         urls.push(v.src);
     })
-    
+
     $.delegate(document.querySelector('#img_box'), 'click','img',function(){
         var current = this.src;
+        var buttons = [];
+        var buttonDemo = {};
+        buttonDemo.img = "file:///C:/Users/Administrator/Desktop/github/previewImage-mobile/image/z.png";
+        buttonDemo.text =  "保存";
+        buttonDemo.clickFunc = function(data){
+            console.log("hhh",data);
+            previewImage.toast("成功");
+        }
+        buttons.push(buttonDemo);
         var obj = {
             urls : urls,
-            current : current
+            current : current,
+            buttons : buttons
         };
         previewImage.start(obj);
     });
-    
+
 </script>
 </html>

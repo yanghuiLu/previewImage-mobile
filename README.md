@@ -1,5 +1,5 @@
 # previewImage-mobile
-仿微信js-sdk wx.previewImage javascript实现，支持图片预览，滑动切换，双指缩放，图片缓存;  
+仿微信js-sdk wx.previewImage javascript实现，支持图片预览，滑动切换，双指缩放，图片缓存;
 
 it's a plugin previewImage for mobile html5 which support for picture preview, slide switch, double finger zoom, picture caching
 # Usage
@@ -27,6 +27,8 @@ And you can import dist/md5.js to your project,if imported it is uesd to get the
     </script>
 ```
 # Demo
-![](image/qrcode.png)  
+![](image/qrcode.png)
 
-[Demo](http://www.luyanghui.com/mylearn/package/previewimage) 
+
+更新在图片上类似微博的图片浏览操作，点击三点弹出底部栏目
+[Demo](http://www.luyanghui.com/mylearn/package/previewimage)
