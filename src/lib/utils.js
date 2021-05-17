@@ -3,10 +3,45 @@ import { bind }  from './helps/bind'
 
 const toString = Object.prototype.toString;
 
-const isArray = function(value) {
-    return toString.call(value) == '[object Array]';
+const isFunction = function(value) {
+  return toString.call(value) == '[object Function]';
 }
-
+const isString = function(value) {
+  return toString.call(value) == '[object String]';
+}
+const isBoolean = function(value) {
+  return toString.call(value) == '[object Boolean]';
+}
+const isUndefined = function(value) {
+  return toString.call(value) == '[object Undefined]';
+}
+const isNumber = function(value) {
+  return toString.call(value) == '[object Number]';
+}
+const isSymbol = function(value) {
+  return toString.call(value) == '[object Symbol]';
+}
+const isNull = function(value) {
+  return toString.call(value) == '[object Null]';
+}
+export const isArray = function(value) {
+  return toString.call(value) == '[object Array]';
+}
+const isObject = function(value) {
+  return (
+    toString.call(value) == '[object Object]' ||
+    // if it isn't a primitive value, then it is a common object
+    (!this.isNumber(value) &&
+      !this.isString(value) &&
+      !this.isBoolean(value) &&
+      !this.isArray(value) &&
+      !this.isNull(value) &&
+      !this.isFunction(value) &&
+      !this.isUndefined(value) &&
+      !this.isSymbol(value)
+    )
+  )
+}
 
 /**
  * Iterate over an Array or an Object invoking a function for each item.
@@ -55,7 +90,7 @@ const isArray = function(value) {
  * @param {Object} thisArg The object to bind function to
  * @return {Object} The resulting value of object a
  */
- function extend(a, b, thisArg) {
+export function extend(a, b, thisArg) {
     forEach(b, function assignValue(val, key) {
       if (thisArg && typeof val === 'function') {
         a[key] = bind(val, thisArg);
@@ -66,9 +101,27 @@ const isArray = function(value) {
     return a;
 }
   
+/**
+ * 
+ * @param {Object} obj source object
+ * @returns Object 
+ */
+ export function objectClone(obj){
+  var cObj;
+  if (isObject(obj) || isArray(obj)) {
+    cObj = isObject(obj) ? {} : [];
+    for (var i in obj) {
+      cObj[i] = oCopy(obj[i])
+    }
+  } else {
+    cObj = obj;
+  }
+  return cObj;
+}
 
 export default {
     isArray,
     forEach,
     extend,
+    objectClone
 }

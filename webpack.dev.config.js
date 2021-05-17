@@ -1,46 +1,30 @@
 const path = require('path')
+const { merge } = require('webpack-merge')
+const baseWebpackConfig = require('./webpack.base.config')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require("terser-webpack-plugin");
-
+const { CleanWebpackPlugin }=require('clean-webpack-plugin');
 const outputPath = path.resolve(__dirname,'./dist');
 
-module.exports = {
+
+module.exports =  merge(baseWebpackConfig, {
     mode: 'development',
-    devServer:{
-        contentBase: path.join(__dirname, 'dist'),
-        hot: true,
-        // open: true,
-         // hotOnly: true,
-        // inline: true,
-        proxy: {} // 代理
-    },  
-    target: "web",
     devtool: 'inline-source-map',
-    // node: {
-    //     process: false
-    // },
+    devServer:{
+        contentBase: path.join(__dirname, 'distdev'),
+        hot: true,
+        // proxy: {}, // 代理
+        // compress: true
+    },
     entry: {
-        // vendors: [],
-        main: {
-            import: './index.js',
-            // filename: 'pages/[name][ext]',
-            // dependOn: ['vendors']
+        'previewImage': {
+            import: './public/index.js',
+            filename: '[name].[fullhash].js',
         },
     },
-    output:{
-        path: outputPath,
-        filename: 'previewImage.js',
-        library: {
-            name: 'previewImage2',
-            type: 'umd'
-        },
-        sourceMapFilename: 'previewImage.map',
-        // libraryTarget: 'umd',
-        // umdNamedDefine: true,
-        // globalObject: 'this',
-    },
-    plugins: [
+    plugins:[
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({ template: './public/index.html' }),
         new CopyWebpackPlugin(
             {
@@ -69,27 +53,10 @@ module.exports = {
                 // }
             }
         )
-    ],
-    module: {
-        rules: [
-            {
-              test: /\.less$/i,
-              use:[
-                  { loader: 'style-loader' },
-                  { loader: 'css-loader' },
-                  { loader: 'less-loader' },
-              ]
-            },
-            {
-                test: /\.m?js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                    presets: ['@babel/preset-env']
-                    }
-                }
-            }
-        ]
-      }
-}
+    ]
+    // output:{
+    //     path: outputPath,
+    //     filename: '[name][ext]',
+    //     sourceMapFilename: '[name][fullhash][ext].map',
+    // }
+});

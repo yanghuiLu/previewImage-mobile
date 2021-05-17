@@ -1,10 +1,9 @@
 'use strict';
 
-const utils = require('../utils')
+import { isArray } from'../utils';
 
 export class PreviewImage {
     constructor(){
-        this.init2 = 2
         this.init()
     }
 
@@ -17,7 +16,8 @@ export class PreviewImage {
     }
 
     start({ urls,current }){
-        if(!utils.isArray(urls)){
+        this.initDom()
+        if(!isArray(urls)){
             throw new Error('urls 必须是数组')
         }
         this.urls = urls;
@@ -25,5 +25,4 @@ export class PreviewImage {
     }
 }
 
-// module.exports = PreviewImage;
 export default PreviewImage;
