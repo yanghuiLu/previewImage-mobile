@@ -1,7 +1,7 @@
 'use strict';
 
 import { isArray } from'../utils';
-import { createDom,createImageContainer } from './createDom'
+import { createDom,createImageContainer,createImageBox,appendDom } from './createDom'
 
 export class PreviewImage {
     constructor(){
@@ -16,9 +16,13 @@ export class PreviewImage {
 
     initDom(urls){
         if(!this.$container){
-            this.$container = createImageContainer()
+            let { container,box } = createImageContainer()
+            this.$container = container;
+            this.$box = box
             document.body.append(this.$container)
         }
+        let $urls = createImageBox(urls)
+        appendDom(this.$box,$urls)
         console.log('initDom')
     }
 
