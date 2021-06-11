@@ -6,7 +6,6 @@ import { createDom,createImageContainer,createImageBox,appendDom } from './creat
 export class PreviewImage {
     constructor(){
         this.$container = null; //图片容器
-
         this.init()
     }
 
@@ -26,6 +25,15 @@ export class PreviewImage {
         console.log('initDom')
     }
 
+    bindEvent(){
+        let itemClassName = '__previewImage-item';
+        $.delegate(this.$container,'click',itemClassName,closePreview);
+        $.delegate(this.$container,'touchstart',itemClassName,touchStartFun);
+        $.delegate(this.$container,'touchmove',itemClassName,touchMoveFun);
+        $.delegate(this.$container,'touchend',itemClassName,touchEndFun);
+        $.delegate(this.$container,'touchcancel',itemClassName,touchEndFun);
+    }
+
     start({ urls,current }){
         if(!isArray(urls)){
             throw new Error('urls 必须是数组')
@@ -33,6 +41,7 @@ export class PreviewImage {
         this.urls = urls;
         this.current = current;
         this.initDom(urls)
+        this.bindEvent()
     }
 }
 

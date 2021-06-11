@@ -1,5 +1,5 @@
 import { isArray  } from '../utils'
-import loadingSvg from '../../assets/loading.svg'
+// import loadingSvg from '../../assets/loading.svg'
 
 export function createDom(tag,className){
     let dom = document.createElement(tag);
@@ -18,11 +18,12 @@ export function createImageContainer(){
 export function createImageBox(urls){
     return urls.map(item => {
         let imgBox = createDom('div',['__previewImage-item'])
-        let img = new Image();
-        img.src = loadingSvg;
-        img.className = '__previewImage-image';
-        img.dataset.src = item;
-        imgBox.append(img)
+        // let img = new Image();
+        // img.src = loadingSvg;
+        // img.className = '__previewImage-image';
+        // img.dataset.src = item;
+        // imgBox.append(loadingSvg)
+        // imgBox.innerHTML = loadingSvg
         return imgBox;
     });
 }
@@ -39,3 +40,4 @@ export function appendDom(parent,nodes){
     }
     return parent;
 }
+

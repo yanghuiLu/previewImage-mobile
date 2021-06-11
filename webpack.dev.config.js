@@ -29,7 +29,12 @@ module.exports =  merge(baseWebpackConfig, {
         new CopyWebpackPlugin(
             {
                 patterns: [
-                    { from: path.resolve(__dirname, './public'), to: outputPath },
+                    { 
+                        from: path.resolve(__dirname, './public'), to: outputPath ,
+                        globOptions: {
+                            
+                        }
+                    },
                 ],
                 // {
                 //     transform(content,absoluteFrom) {
